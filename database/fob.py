@@ -24,7 +24,7 @@ class Fob:
             result = cursor.fetchall()
             rows = []
             for row in result:
-                d = dict(zip(Fob.columns, row))   # a dict with column names as keys
+                d = dict(zip(Fob.columns, row)) # a dict with column names as keys
                 rows.append(d)
             return rows
         except:
