@@ -1,7 +1,9 @@
 import sqlite3
 import datetime
 import re
+import requests
 
+ENGINE_ENDPOINT = "http://127.0.0.1:8090/run"
 
 class Task:
     columns = ['id', 'product', 'createdAt', 'startedAt', 'finishedAt', 'percent', 'status']
@@ -78,7 +80,7 @@ class Task:
     async def request(self, id, request):
         body = {
             "ID" : id,
-            "config": {
+            "Config": {
                 "PRODUCT": request['PRODUCT'],
                 "DELTAS_STORAGE": list(map(float, request['DELTAS_STORAGE'].split(','))),
                 "DELTA_RAILWAY": list(map(float, request['DELTA_RAILWAY'].split(','))),
@@ -217,3 +219,4 @@ class Task:
                 ]
             }
         }
+        req = requests.post(ENGINE_ENDPOINT, json=body)

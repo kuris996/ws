@@ -15,7 +15,6 @@ def tick():
     db_task = sqlite3.connect('../task.db')
     task = Task(db_task)
     rows = task.fetch_idle()
-    print(rows)
 
 def initialize():
     app = web.Application()
@@ -30,7 +29,7 @@ def initialize():
         "product TEXT, "
         "createdAt timestamp, startedAt timestamp, finishedAt timestamp, percent INTEGER, status TEXT)")
     app.db_task.commit()
-    app.task_update = TaskUpdate(1.0, tick)
+    app.task_update = TaskUpdate(60.0, tick)
     app.task_update.start()
     return app
 
