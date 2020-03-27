@@ -218,20 +218,7 @@ class Task:
                 "SHUFFLE_STORAGE": request['SHUFFLE_STORAGE'],
                 "SHUFFLE_RAILWAY": request['SHUFFLE_RAILWAY'],
                 "CORRECTION_FLAG": request['CORRECTION_FLAG'],
-                "CORRECTION_CORIDOR": [
-                    0.075,
-                    0.068,
-                    0.054,
-                    0.056,
-                    0.08,
-                    0.072,
-                    0.067,
-                    0.054,
-                    0.058,
-                    0.062,
-                    0.061,
-                    0.063
-                ]
+                "CORRECTION_CORIDOR": list(map(float, request['CORRECTION_CORIDOR'].split(',')))
             }
         }
         req = requests.post(ENGINE_ENDPOINT, json=body)
