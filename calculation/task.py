@@ -8,12 +8,14 @@ ENGINE_ENDPOINT = "http://127.0.0.1:8090/run"
 class Task:
     columns = ['id', 'product', 'createdAt', 'startedAt', 'finishedAt', 'percent', 'status']
 
-    def __init__(self, db):
+    def __init__(self, db, lock):
         self.__db = db
+        self.__lock = lock
 
     async def fetch(self):
-        cursor = self.__db.cursor()
         try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
             cursor.execute("SELECT * FROM tasks")
             result = cursor.fetchall()
             rows = []
@@ -23,10 +25,14 @@ class Task:
             return rows
         except sqlite3.Error as error:
             return None
+        finally:
+            self.__lock.release()
+
     
     def fetch_running(self):
-        cursor = self.__db.cursor()
         try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
             cursor.execute("SELECT * FROM tasks WHERE status = 'running'")
             result = cursor.fetchall()
             rows = []
@@ -36,10 +42,14 @@ class Task:
             return rows
         except sqlite3.Error as error:
             return None
+        finally:
+            self.__lock.release()
+
 
     def fetch_idle(self):
-        cursor = self.__db.cursor()
         try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
             cursor.execute("SELECT * FROM tasks WHERE status = 'idle'")
             result = cursor.fetchall()
             rows = []
@@ -49,10 +59,13 @@ class Task:
             return rows
         except sqlite3.Error as error:
             return None
+        finally:
+            self.__lock.release()
 
     async def add(self, product):
-        cursor = self.__db.cursor()
         try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
             cursor.execute(
                 "INSERT INTO tasks ("
                 "   product,"
@@ -76,6 +89,8 @@ class Task:
             return cursor.lastrowid
         except sqlite3.Error as error:
             return None
+        finally:
+            self.__lock.release()
 
     async def request(self, id, request):
         body = {

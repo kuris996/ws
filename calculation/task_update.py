@@ -1,24 +1,25 @@
 import threading
 
 class TaskUpdate:
-    def __init__(self, interval, tick = None):
-        self.stopped = False
-        self.interval = interval
-        self.tick = tick
+    def __init__(self, app, interval, tick = None):
+        self.__stopped = False
+        self.__interval = interval
+        self.__tick = tick
+        self.__app = app
 
-    def update(self):
-        if self.tick != None:
-            self.tick()
+    def __update(self):
+        if self.__tick != None:
+            self.__tick(self.__app)
         self.start()
 
     def start(self):
-        if self.stopped == True:
+        if self.__stopped == True:
             return
-        self.timer = threading.Timer(self.interval, self.update)
-        self.timer.start()
+        self.__timer = threading.Timer(self.__interval, self.__update)
+        self.__timer.start()
 
     def stop(self):
-        if self.stopped == True:
+        if self.__stopped == True:
             return
-        self.stopped = True
-        self.timer.cancel()
+        self.__stopped = True
+        self.__timer.cancel()

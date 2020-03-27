@@ -6,7 +6,7 @@ import functools
 
 class TaskView(web.View):
     async def get(self):
-        task = Task(self.request.app.db_task)
+        task = Task(self.request.app.db_task, self.request.app.lock)
         try:
             data_source = await task.fetch()
             return web.json_response(data_source, dumps=functools.partial(json.dumps, indent=4, ensure_ascii=False, encoding='utf8'))
@@ -15,7 +15,7 @@ class TaskView(web.View):
         
     
     async def post(self):
-        task = Task(self.request.app.db_task)
+        task = Task(self.request.app.db_task, self.request.app.lock)
         try:
             body = await self.request.json()
             method = body['method']
