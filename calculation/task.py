@@ -10,11 +10,23 @@ class Task:
         self.__db = db
         self.__lock = lock
 
-    async def fetch(self):
+    async def count(self):
         try:
             self.__lock.acquire()
             cursor = self.__db.cursor()
-            cursor.execute("SELECT * FROM tasks")
+            cursor.execute("SELECT COUNT(*) FROM tasks")
+            result = cursor.fetchone()
+            return result[0]
+        except sqlite3.Error as error:
+            return None
+        finally:
+            self.__lock.release()
+
+    async def fetch(self, offset, limit):
+        try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
+            cursor.execute("SELECT * FROM tasks LIMIT {}, {}".format(offset, limit))
             result = cursor.fetchall()
             rows = []
             for row in result:
@@ -86,6 +98,19 @@ class Task:
             self.__db.commit()
             return cursor.lastrowid
         except sqlite3.Error as error:
+            return None
+        finally:
+            self.__lock.release()
+
+    async def remove(self, id):
+        try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
+            s = ','.join(str(x) for x in id)
+            cursor.execute("DELETE FROM tasks WHERE id IN ({})".format(s))
+            self.__db.commit()
+            return id
+        except:
             return None
         finally:
             self.__lock.release()

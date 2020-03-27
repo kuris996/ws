@@ -1,32 +1,31 @@
 from aiohttp import web
 from calculation.task import Task
+from pagination import Pagination
 
 import simplejson as json
 import functools
 import requests
 
-class TaskView(web.View):
-    async def get(self):
+class TaskView(Pagination):
+    async def fetch(self, current_page, page_size):
         task = Task(self.request.app.db_task, self.request.app.lock)
-        try:
-            data_source = await task.fetch()
-            return web.json_response(data_source, dumps=functools.partial(json.dumps, indent=4, ensure_ascii=False, encoding='utf8'))
-        except:
-            return web.Resource(status=400)
+        total = await task.count()
+        data_source = await task.fetch((current_page - 1) * page_size, page_size)
+        return total, data_source
 
-    
-    async def post(self):
+    async def remove(self, id):
         task = Task(self.request.app.db_task, self.request.app.lock)
-        try:
-            body = await self.request.json()
-            method = body['method']
-            if method == 'add':
-                id = await task.add(body['PRODUCT'])
-                await self.run(id, body)
-            return await self.get()
-        except:
-            return web.Response(status=400)
+        await task.remove(id)
 
+    async def add(self, record):
+        task = Task(self.request.app.db_task, self.request.app.lock)
+        await task.add(record)
+        body = await self.request.json()
+        method = record['method']
+        if method == 'add':
+            id = await task.add(record['PRODUCT'])
+            await self.run(id, record)
+        return await self.get()
 
     async def run(self, id, request):
         body = {
