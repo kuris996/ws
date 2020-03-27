@@ -6,10 +6,8 @@ import re
 class Task:
     columns = ['id', 'product', 'createdAt', 'startedAt', 'finishedAt', 'percent', 'status']
 
-
     def __init__(self, db):
         self.__db = db
-
 
     async def fetch(self):
         cursor = self.__db.cursor()
@@ -24,6 +22,31 @@ class Task:
         except sqlite3.Error as error:
             return None
     
+    def fetch_running(self):
+        cursor = self.__db.cursor()
+        try:
+            cursor.execute("SELECT * FROM tasks WHERE status = 'running'")
+            result = cursor.fetchall()
+            rows = []
+            for row in result:
+                d = dict(zip(Task.columns, row)) # a dict with column names as keys
+                rows.append(d)
+            return rows
+        except sqlite3.Error as error:
+            return None
+
+    def fetch_idle(self):
+        cursor = self.__db.cursor()
+        try:
+            cursor.execute("SELECT * FROM tasks WHERE status = 'idle'")
+            result = cursor.fetchall()
+            rows = []
+            for row in result:
+                d = dict(zip(Task.columns, row)) # a dict with column names as keys
+                rows.append(d)
+            return rows
+        except sqlite3.Error as error:
+            return None
 
     async def add(self, product):
         cursor = self.__db.cursor()
