@@ -2,17 +2,18 @@ from aiohttp import web
 
 import sys
 import argparse
-import json
+import simplejson as json
 import functools
 import sqlite3
 import threading
+import requests
 
 from routes import routes
 
 from calculation.task import Task
 from calculation.task_update import TaskUpdate
 
-ENGINE_ENDPOINT = "http://127.0.0.1:8090"
+ENGINE_ENDPOINT = "http://127.0.0.1:5000"
 
 def tick(app):
     db_task = sqlite3.connect('./assets/task.db')
@@ -47,8 +48,7 @@ def initialize():
     except Exception as e:
         print('[ws]: could not initialize', str(e))
     
-
-
+    
 if __name__ == "__main__":
     app = initialize()
     web.run_app(app)

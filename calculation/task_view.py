@@ -6,6 +6,7 @@ import simplejson as json
 import functools
 import requests
 
+
 class TaskView(Pagination):
     async def fetch(self, current_page, page_size):
         task = Task(self.request.app.db_task, self.request.app.lock)
@@ -29,9 +30,9 @@ class TaskView(Pagination):
 
     async def run(self, id, request):
         body = {
-            "ID" : id,
+            "ID": 1,
             "Config": {
-                "PRODUCT": request['PRODUCT'],
+                "PRODUCT": str(request['PRODUCT']),
                 "DELTAS_STORAGE": list(map(float, request['DELTAS_STORAGE'].split(','))),
                 "DELTA_RAILWAY": list(map(float, request['DELTA_RAILWAY'].split(','))),
                 "FILENAMES_DICT": {
@@ -48,11 +49,11 @@ class TaskView(Pagination):
                     "ноябрь": "ноябрь.xlsx",
                     "декабрь": "декабрь.xlsx"
                 },
-                "YEARS": list(map(float, request['YEARS'].split(','))),
-                "FOB_PRICES": list(map(float, request['FOB_PRICES'].split(','))),
-                "RAILWAY_INITIAL_PRICE": request['RAILWAY_INITIAL_PRICE'],
-                "MAX_RATIO_RAILWAY": request['MAX_RATIO_RAILWAY'],
-                "STORAGES_BUY_ON_MARKET": request['STORAGES_BUY_ON_MARKET'],
+                "YEARS": list(map(int, request['YEARS'].split(','))),
+                "FOB_PRICES": list(map(int, request['FOB_PRICES'].split(','))),
+                "RAILWAY_INITIAL_PRICE": int(request['RAILWAY_INITIAL_PRICE']),
+                "MAX_RATIO_RAILWAY": int(request['MAX_RATIO_RAILWAY']),
+                "STORAGES_BUY_ON_MARKET": bool(request['STORAGES_BUY_ON_MARKET']),
                 "CONSUMPTION_PATTERN": [
                     [
                         25.24773087,
@@ -128,16 +129,16 @@ class TaskView(Pagination):
                 "PATH": {
                     "wh_prefix": "data/no_perevalka_updated_constr/railway/",
                     "wh_file": "data/no_perevalka_updated_constr/storage/Склады_",
-                    "wh_add_name": "constrained"
+                    "wh_add_name": "_[P]{}_[CF]{}_[DS]{}_[SBoM]{}"
                 },
-                "WH_PREMIUM_RAILWAY": request['WH_PREMIUM_RAILWAY'],
-                "OVERALL_PREMIA_ADDITION": request['OVERALL_PREMIA_ADDITION'],
-                "MIN_RADIUS": request['MIN_RADIUS'],
-                "MAX_RADIUS": request['MAX_RADIUS'],
-                "CUSTOMER_DISTANCE": request['CUSTOMER_DISTANCE'],
-                "AVAILABILITY_RADIUS": request['AVAILABILITY_RADIUS'],
-                "STORAGE_PRICE": request['STORAGE_PRICE'],
-                "BALANCE_RATIO": request['BALANCE_RATIO'],
+                "WH_PREMIUM_RAILWAY": int(request['WH_PREMIUM_RAILWAY']),
+                "OVERALL_PREMIA_ADDITION": int(request['OVERALL_PREMIA_ADDITION']),
+                "MIN_RADIUS": int(request['MIN_RADIUS']),
+                "MAX_RADIUS": int(request['MAX_RADIUS']),
+                "CUSTOMER_DISTANCE": float(request['CUSTOMER_DISTANCE']),
+                "AVAILABILITY_RADIUS": int(request['AVAILABILITY_RADIUS']),
+                "STORAGE_PRICE": int(request['STORAGE_PRICE']),
+                "BALANCE_RATIO": float(request['BALANCE_RATIO']),
                 "DISTANCE_PRICE": [
                     {"value": 390, "low": 0, "high": 33.33},
                     {"value": 507, "low": 33.33, "high": 66.67},
@@ -149,11 +150,20 @@ class TaskView(Pagination):
                     {"value": 1377, "low": 233.33, "high": 266.67},
                     {"value": 1e20, "low": 266.67, "high": 1e20}
                 ],
-                "REARRANGE_HOLDINGS": request['REARRANGE_HOLDINGS'],
-                "SHUFFLE_STORAGE": request['SHUFFLE_STORAGE'],
-                "SHUFFLE_RAILWAY": request['SHUFFLE_RAILWAY'],
-                "CORRECTION_FLAG": request['CORRECTION_FLAG'],
+                "REARRANGE_HOLDINGS": bool(request['REARRANGE_HOLDINGS']),
+                "SHUFFLE_STORAGE": bool(request['SHUFFLE_STORAGE']),
+                "SHUFFLE_RAILWAY": bool(request['SHUFFLE_RAILWAY']),
+                "CORRECTION_FLAG": bool(request['CORRECTION_FLAG']),
                 "CORRECTION_CORIDOR": list(map(float, request['CORRECTION_CORIDOR'].split(',')))
             }
         }
-        req = requests.post(self.request.app.engine_endpoint + "/run", json=body)
+        try:
+            headers = {'Content-type': 'application/json'}
+            print(body)
+            req = requests.post(self.request.app.engine_endpoint + "/run", 
+                json = body,
+                headers=headers)
+            rep = req.text
+            print(rep)
+        except Exception as e:
+            print('[ws]: could not request', str(e))
