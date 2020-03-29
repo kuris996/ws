@@ -9,18 +9,24 @@ class Fob:
         self.__db = db
 
     async def count(self):
-        cursor = self.__db.cursor()
         try:
+            cursor = self.__db.cursor()
             cursor.execute("SELECT COUNT(*) FROM FOB")
             result = cursor.fetchone()
             return result[0]
         except:
             return None
 
-    async def fetch(self, offset, limit):
-        cursor = self.__db.cursor()
+    async def fetch(self, offset, limit, sorter):
         try:
-            cursor.execute("SELECT * FROM FOB LIMIT {}, {}".format(offset, limit))
+            cursor = self.__db.cursor()
+            sql = "SELECT * FROM FOB "
+            if sorter != None:
+                sql += "ORDER BY {} ".format(sorter['field'])
+                if sorter['order'] == 'descend':
+                    sql += "DESC "
+            sql += "LIMIT {}, {}".format(offset, limit)
+            cursor.execute(sql)
             result = cursor.fetchall()
             rows = []
             for row in result:
@@ -31,8 +37,8 @@ class Fob:
             return None
 
     async def add(self, record):
-        cursor = self.__db.cursor()
         try:
+            cursor = self.__db.cursor()
             cursor.execute(
                 "INSERT INTO FOB("
                 "   product,"
@@ -55,8 +61,8 @@ class Fob:
             return None
 
     async def update(self, record):
-        cursor = self.__db.cursor()
         try:
+            cursor = self.__db.cursor()
             cursor.execute(
                 "UPDATE FOB SET"
                 "   product = ?,"
@@ -80,8 +86,8 @@ class Fob:
             return None
 
     async def remove(self, id):
-        cursor = self.__db.cursor()
         try:
+            cursor = self.__db.cursor()
             s = ','.join(str(x) for x in id)
             cursor.execute("DELETE FROM FOB WHERE id IN ({})".format(s))
             self.__db.commit()

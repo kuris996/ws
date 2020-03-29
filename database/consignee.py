@@ -17,10 +17,16 @@ class Consignee:
         except:
             return None
 
-    async def fetch(self, offset, limit):
-        cursor = self.__db.cursor()
+    async def fetch(self, offset, limit, sorter):
         try:
-            cursor.execute("SELECT * FROM consignee LIMIT {}, {}".format(offset, limit))
+            cursor = self.__db.cursor()
+            sql = "SELECT * FROM consignee "
+            if sorter != None:
+                sql += "ORDER BY {} ".format(sorter['field'])
+                if sorter['order'] == 'descend':
+                    sql += "DESC "
+            sql += "LIMIT {}, {}".format(offset, limit)
+            cursor.execute(sql)
             result = cursor.fetchall()
             rows = []
             for row in result:

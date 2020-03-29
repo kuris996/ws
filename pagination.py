@@ -4,18 +4,6 @@ import simplejson as json
 import functools
 
 class Pagination(web.View):
-    async def fetch(self):
-        pass
-
-    async def remove(self, id):
-        pass
-
-    async def add(self, record):
-        pass
-
-    async def update(self, record):
-        pass
-
     async def get(self):
         page_size = 10
         if 'pageSize' in self.request.query:
@@ -23,8 +11,13 @@ class Pagination(web.View):
         current_page = 1
         if 'currentPage' in self.request.query:
             current_page = int(self.request.query['currentPage'])
+        sorter = None
+        if 'sorter' in self.request.query:
+            sorter = str(self.request.query['sorter'])
+            sorter = sorter.split('-')
+            sorter = { "field" : sorter[0], "order" : sorter[1] }
         try: 
-            total, data_source = await self.fetch(current_page, page_size)
+            total, data_source = await self.fetch(current_page, page_size, sorter)
             return web.json_response({
                 'list': data_source,
                 'pagination': { 

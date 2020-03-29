@@ -7,10 +7,10 @@ import functools
 
 
 class FactoryView(Pagination):
-    async def fetch(self, current_page, page_size):
+    async def fetch(self, current_page, page_size, sorter):
         factory = Factory(self.request.app.db_ref)
         total = await factory.count()
-        data_source = await factory.fetch((current_page - 1) * page_size, page_size)
+        data_source = await factory.fetch((current_page - 1) * page_size, page_size, sorter)
         return total, data_source
 
     async def remove(self, id):

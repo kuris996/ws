@@ -7,10 +7,10 @@ import functools
 
 
 class PerevalkaUpakovkaView(Pagination):
-    async def fetch(self, current_page, page_size):
+    async def fetch(self, current_page, page_size, sorter):
         perevalka_upakovka = PerevalkaUpakovka(self.request.app.db_ref)
         total = await perevalka_upakovka.count()
-        data_source = await perevalka_upakovka.fetch((current_page - 1) * page_size, page_size)
+        data_source = await perevalka_upakovka.fetch((current_page - 1) * page_size, page_size, sorter)
         return total, data_source
 
     async def remove(self, id):

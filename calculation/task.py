@@ -1,7 +1,5 @@
 import sqlite3
 import datetime
-import re
-
 
 class Task:
     columns = ['id', 'product', 'createdAt', 'startedAt', 'finishedAt', 'percent', 'status']
@@ -22,11 +20,17 @@ class Task:
         finally:
             self.__lock.release()
 
-    async def fetch(self, offset, limit):
+    async def fetch(self, offset, limit, sorter):
         try:
             self.__lock.acquire()
             cursor = self.__db.cursor()
-            cursor.execute("SELECT * FROM tasks LIMIT {}, {}".format(offset, limit))
+            sql = "SELECT * FROM tasks "
+            if sorter != None:
+                sql += "ORDER BY {} ".format(sorter['field'])
+                if sorter['order'] == 'descend':
+                    sql += "DESC "
+            sql += "LIMIT {}, {}".format(offset, limit)
+            cursor.execute(sql)
             result = cursor.fetchall()
             rows = []
             for row in result:
@@ -110,6 +114,28 @@ class Task:
             cursor.execute("DELETE FROM tasks WHERE id IN ({})".format(s))
             self.__db.commit()
             return id
+        except:
+            return None
+        finally:
+            self.__lock.release()
+
+    def update_status(self, record):
+        try:
+            self.__lock.acquire()
+            cursor = self.__db.cursor()
+            cursor.execute(
+                "UPDATE tasks SET"
+                "   startedAt = ?,"
+                "   finishedAt = ?,"
+                "   status = ?"
+                "WHERE id = ?",
+                (record['startedAt'],
+                record['finishedAt'],
+                record['status'],
+                record['id'])
+            )
+            self.__db.commit()
+            return True
         except:
             return None
         finally:

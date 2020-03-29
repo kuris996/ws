@@ -7,10 +7,10 @@ import functools
 
 
 class FobView(Pagination):
-    async def fetch(self, current_page, page_size):
+    async def fetch(self, current_page, page_size, sorter):
         fob = Fob(self.request.app.db_ref)
         total = await fob.count()
-        data_source = await fob.fetch((current_page - 1) * page_size, page_size)
+        data_source = await fob.fetch((current_page - 1) * page_size, page_size, sorter)
         return total, data_source
 
     async def remove(self, id):

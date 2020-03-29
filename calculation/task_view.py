@@ -6,12 +6,11 @@ import simplejson as json
 import functools
 import requests
 
-
 class TaskView(Pagination):
-    async def fetch(self, current_page, page_size):
+    async def fetch(self, current_page, page_size, sorter):
         task = Task(self.request.app.db_task, self.request.app.lock)
         total = await task.count()
-        data_source = await task.fetch((current_page - 1) * page_size, page_size)
+        data_source = await task.fetch((current_page - 1) * page_size, page_size, sorter)
         return total, data_source
 
     async def remove(self, id):
@@ -30,7 +29,7 @@ class TaskView(Pagination):
 
     async def run(self, id, request):
         body = {
-            "ID": 1,
+            "ID": id,
             "Config": {
                 "PRODUCT": str(request['PRODUCT']),
                 "DELTAS_STORAGE": list(map(float, request['DELTAS_STORAGE'].split(','))),
@@ -159,11 +158,9 @@ class TaskView(Pagination):
         }
         try:
             headers = {'Content-type': 'application/json'}
-            print(body)
             req = requests.post(self.request.app.engine_endpoint + "/run", 
                 json = body,
                 headers=headers)
             rep = req.text
-            print(rep)
         except Exception as e:
             print('[ws]: could not request', str(e))
