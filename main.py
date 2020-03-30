@@ -15,6 +15,7 @@ from routes import routes
 
 from calculation.task import Task
 from calculation.task_update import TaskUpdate
+from database.fob import Fob
 
 ENGINE_ENDPOINT = "http://127.0.0.1:5000"
 
@@ -75,6 +76,20 @@ def initialize():
     
     
 if __name__ == "__main__":
-    app = initialize()
-    web.run_app(app)
-    app.task_update.stop()
+    db_ref = sqlite3.connect('./assets/ref.db')
+    fob = Fob(db_ref, None)
+    record = {
+        'id': 1,
+        'product': "prod",
+        'year': 10,
+        'month' : 1,
+        'seller' : "seller",
+        'foreign_price' : 1.234, 
+        'foreign_costs' : 2.345
+    }
+    fob.update(record)
+    id = [1,2,3]
+    fob.remove(id)
+    #app = initialize()
+    #web.run_app(app)
+    #app.task_update.stop()

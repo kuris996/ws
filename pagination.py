@@ -5,28 +5,25 @@ import functools
 
 class Pagination(web.View):
     async def get(self):
-        page_size = 10
-        if 'pageSize' in self.request.query:
-            page_size = int(self.request.query['pageSize'])
-        current_page = 1
-        if 'currentPage' in self.request.query:
-            current_page = int(self.request.query['currentPage'])
-        sorter = None
-        if 'sorter' in self.request.query:
-            sorter = str(self.request.query['sorter'])
+        page_size = int(self.request.query.get('pageSize', 10))
+        current_page = int(self.request.query.get('currentPage', 1))
+        sorter = self.request.query.get('sorter', None)
+        if sorter != None:
             sorter = sorter.split('-')
             sorter = { "field" : sorter[0], "order" : sorter[1] }
         try: 
-            total, data_source = await self.fetch(current_page, page_size, sorter)
+            total, data_source, filters = await self.fetch(
+                current_page, page_size, sorter, self.request.query) 
             return web.json_response({
                 'list': data_source,
                 'pagination': { 
                     'total' : total,
                     'pageSize' : page_size,
                     'currentPage' : current_page
-                }
+                },
+                'filters' : filters
             }, dumps=functools.partial(json.dumps, indent=4, ensure_ascii=False, encoding='utf8'))
-        except:
+        except Exception as e:
             return web.Response(status=400)
 
     async def post(self):
