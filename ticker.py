@@ -1,6 +1,6 @@
 import threading
 
-class TaskUpdate:
+class Ticker:
     def __init__(self, app, interval, tick = None):
         self.__stopped = False
         self.__interval = interval

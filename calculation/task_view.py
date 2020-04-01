@@ -5,26 +5,31 @@ from pagination import Pagination
 import simplejson as json
 import functools
 import requests
+import datetime
 
 class TaskView(Pagination):
-    async def fetch(self, current_page, page_size, sorter):
-        task = Task(self.request.app.db_task, self.request.app.lock)
+    async def fetch(self, current_page, page_size, sorter, rest):
+        task = Task(self.request.app.db, self.request.app.db_lock)
         total = await task.count()
-        data_source = await task.fetch((current_page - 1) * page_size, page_size, sorter)
-        return total, data_source
+        filters = await task.fetch_filters()
+        data_source = await task.fetch((current_page - 1) * page_size, page_size, sorter, rest)
+        return total, data_source, filters
 
     async def remove(self, id):
-        task = Task(self.request.app.db_task, self.request.app.lock)
+        task = Task(self.request.app.db, self.request.app.db_lock)
         await task.remove(id)
 
     async def add(self, record):
-        task = Task(self.request.app.db_task, self.request.app.lock)
-        await task.add(record)
-        body = await self.request.json()
+        task = Task(self.request.app.db, self.request.app.db_lock)
         method = record['method']
         if method == 'add':
-            id = await task.add(record['PRODUCT'])
-            await self.run(id, record)
+            _record = (record['PRODUCT'],
+                       datetime.datetime.now(),
+                       None,
+                       None,
+                      'idle')
+            id = await task.add(_record)
+            #await self.run(id, record)
         return await self.get()
 
     async def run(self, id, request):

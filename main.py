@@ -14,18 +14,18 @@ import dateutil.parser
 from routes import routes
 
 from calculation.task import Task
-from calculation.task_update import TaskUpdate
-from database.fob import Fob
+from ticker import Ticker
 
 ENGINE_ENDPOINT = "http://127.0.0.1:5000"
+DB_PATH = './assets/db.db'
 
-def tick(app):
+def task_check_results(app):
     try:
         headers = {'Content-type': 'application/json'}
         req = requests.post(app.engine_endpoint + "/check_results")
         result = json.loads(req.text)
-        db_task = sqlite3.connect('./assets/task.db')
-        task = Task(db_task, app.lock)
+        db = sqlite3.connect(DB_PATH)
+        task = Task(db, app.db_lock)
         for key in result:
             value = result[key]
             startedAt = None
@@ -44,8 +44,6 @@ def tick(app):
     except Exception as e:
         print('[tick]: ', e)
 
-
-
 def initialize():
     try:
         app = web.Application()
@@ -58,38 +56,27 @@ def initialize():
             app.engine_endpoint = ENGINE_ENDPOINT
         else:
             app.engine_endpoint = args.ee
-        app.db_ref = sqlite3.connect('./assets/ref.db')
-        app.db_task = sqlite3.connect('./assets/task.db')
-        cursor = app.db_task.cursor()
+        app.db = sqlite3.connect(DB_PATH)
+        cursor = app.db.cursor()
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS tasks("
+            "CREATE TABLE IF NOT EXISTS task("
             "id INTEGER PRIMARY KEY, "
-            "product TEXT, "
-            "createdAt timestamp, startedAt timestamp, finishedAt timestamp, percent INTEGER, status TEXT)")
-        app.db_task.commit()
-        app.lock = threading.Lock()
-        app.task_update = TaskUpdate(app, 5.0, tick)
+            "product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
+        app.db.commit()
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS kit("
+            "id INTEGER PRIMARY KEY, "
+            "uuid TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
+        )
+        app.db.commit()
+        app.db_lock = threading.Lock()
+        app.task_update = Ticker(app, 5.0, task_check_results)
         app.task_update.start()
         return app
     except Exception as e:
         print('[ws]: could not initialize', str(e))
     
-    
 if __name__ == "__main__":
-    db_ref = sqlite3.connect('./assets/ref.db')
-    fob = Fob(db_ref, None)
-    record = {
-        'id': 1,
-        'product': "prod",
-        'year': 10,
-        'month' : 1,
-        'seller' : "seller",
-        'foreign_price' : 1.234, 
-        'foreign_costs' : 2.345
-    }
-    fob.update(record)
-    id = [1,2,3]
-    fob.remove(id)
-    #app = initialize()
-    #web.run_app(app)
-    #app.task_update.stop()
+    app = initialize()
+    web.run_app(app)
+    app.task_update.stop()
