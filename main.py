@@ -14,6 +14,7 @@ import dateutil.parser
 from routes import routes
 
 from calculation.task import Task
+from calculation.input import Input
 from ticker import Ticker
 
 ENGINE_ENDPOINT = "http://127.0.0.1:5000"
