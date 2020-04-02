@@ -21,7 +21,6 @@ DB_PATH = './assets/db.db'
 
 def task_check_results(app):
     try:
-        headers = {'Content-type': 'application/json'}
         req = requests.post(app.engine_endpoint + "/check_results")
         result = json.loads(req.text)
         db = sqlite3.connect(DB_PATH)
@@ -71,11 +70,11 @@ def initialize():
         app.db.commit()
         app.db_lock = threading.Lock()
         app.task_update = Ticker(app, 5.0, task_check_results)
-        app.task_update.start()
+        #app.task_update.start()
         return app
     except Exception as e:
         print('[ws]: could not initialize', str(e))
-    
+        
 if __name__ == "__main__":
     app = initialize()
     web.run_app(app)
