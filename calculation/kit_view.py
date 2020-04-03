@@ -23,7 +23,8 @@ class KitView(Pagination):
         kit = Kit(self.request.app.db, self.request.app.db_lock)
         method = record['method']
         if method == 'add':
-            _record = (record['uuid'],
+            _record = (record['name'],
+                       record['uuid'],
                        datetime.datetime.now(),
                        None,
                        None,

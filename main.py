@@ -66,7 +66,7 @@ def initialize():
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS kit("
             "id INTEGER PRIMARY KEY, "
-            "uuid TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
+            "name TEXT, uuid TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
         )
         app.db.commit()
         app.db_lock = threading.Lock()
