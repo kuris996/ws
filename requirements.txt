@@ -2,3 +2,5 @@ aiohttp
 simplejson
 wheel
 requests
+python-dateutil
+boto3
