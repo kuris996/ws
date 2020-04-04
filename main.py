@@ -69,6 +69,7 @@ def initialize():
             app.engine_endpoint = ENGINE_ENDPOINT
         else:
             app.engine_endpoint = args.ee
+        print("ENDPOINT: ", app.engine_endpoint)
         app.db = sqlite3.connect(DB_PATH)
         cursor = app.db.cursor()
         cursor.execute(
@@ -84,7 +85,7 @@ def initialize():
         app.db.commit()
         app.db_lock = threading.Lock()
         app.task_update = Ticker(app, 30.0, check_results)
-        #app.task_update.start()
+        app.task_update.start()
         return app
     except Exception as e:
         print('[ws]: could not initialize', str(e))
