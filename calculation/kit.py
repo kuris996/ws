@@ -11,3 +11,24 @@ class Kit(Model):
         self.columns = ['id', 'uuid', 'name', 'createdAt', 'startedAt', 'finishedAt', 'status']
         self.filters = ['status']
     
+    def update_status(self, record):
+        try:
+            self.lock.acquire()
+            cursor = self.__db.cursor()
+            cursor.execute(
+                "UPDATE kit SET"
+                "   startedAt = ?,"
+                "   finishedAt = ?,"
+                "   status = ?"
+                "WHERE uuid = ?",
+                (record['startedAt'],
+                record['finishedAt'],
+                record['status'],
+                record['id'])
+            )
+            self.__db.commit()
+            return True
+        except:
+            return None
+        finally:
+            self.lock.release()

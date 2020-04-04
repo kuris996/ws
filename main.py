@@ -14,18 +14,18 @@ import dateutil.parser
 from routes import routes
 
 from calculation.task import Task
+from calculation.kit import Kit
 from calculation.input import Input
 from ticker import Ticker
 
 ENGINE_ENDPOINT = "http://127.0.0.1:5000"
 DB_PATH = './assets/db.db'
 
-def task_check_results(app):
+def check_results(app):
     try:
         req = requests.post(app.engine_endpoint + "/check_results")
         result = json.loads(req.text)
         db = sqlite3.connect(DB_PATH)
-        task = Task(db, app.db_lock)
         for key in result:
             value = result[key]
             startedAt = None
@@ -34,13 +34,26 @@ def task_check_results(app):
                 startedAt = dateutil.parser.isoparse(value['startedAt'])
             if value['finishedAt'] != None:
                 finishedAt  = dateutil.parser.isoparse(value['finishedAt'])
-            record = {
-                "id" : key,
-                "startedAt" : startedAt,
-                "finishedAt" : finishedAt,
-                "status" : value['status']
-            }
-            task.update_status(record)
+            try:
+                int(key)    # if Number than it`s a Task otherwise it`s a Kit
+                record = {
+                    "id" : key,
+                    "startedAt" : startedAt,
+                    "finishedAt" : finishedAt,
+                    "status" : value['status']
+                }
+                task = Task(db, app.db_lock)
+                task.update_status(record)
+            except:
+                record = {
+                    "id" : key,
+                    "startedAt" : startedAt,
+                    "finishedAt" : finishedAt,
+                    "status" : value['status']
+                }
+                kit = Kit(db, app.db_lock)
+                kit.update_status(record)
+            
     except Exception as e:
         print('[tick]: ', e)
 
@@ -61,7 +74,7 @@ def initialize():
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS task("
             "id INTEGER PRIMARY KEY, "
-            "uuid TEXT, product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
+            "uuid TEXT, kit TEXT, product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
         app.db.commit()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS kit("
@@ -70,7 +83,7 @@ def initialize():
         )
         app.db.commit()
         app.db_lock = threading.Lock()
-        app.task_update = Ticker(app, 30.0, task_check_results)
+        app.task_update = Ticker(app, 30.0, check_results)
         #app.task_update.start()
         return app
     except Exception as e:

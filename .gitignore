@@ -4,5 +4,4 @@ database/__pycache__/*
 .idea/*
 .vscode/settings.json
 calculation/__pycache__/*
-assets/ref.db
-assets/task.db
+assets/*

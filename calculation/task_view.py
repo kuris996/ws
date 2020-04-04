@@ -24,22 +24,25 @@ class TaskView(Pagination):
         method = record['method']
         if method == 'add':
             _record = (record['uuid'],
+                       record['kit'],
                        record['PRODUCT'],
                        datetime.datetime.now(),
                        None,
                        None,
                       'idle')
             id = await task.add(_record)
-            #await self.run(id, record)
+            await self.run(id, record)
         return await self.get()
 
-    async def run(self, id, request):
+    async def run(self, id, record):
         body = {
             "ID": id,
             "Config": {
-                "PRODUCT": str(request['PRODUCT']),
-                "DELTAS_STORAGE": list(map(float, request['DELTAS_STORAGE'].split(','))),
-                "DELTA_RAILWAY": list(map(float, request['DELTA_RAILWAY'].split(','))),
+                "DATA_ID": str(record['kit']),
+                "CONFIG_ID": str(record['uuid']),
+                "PRODUCT": str(record['PRODUCT']),
+                "DELTAS_STORAGE": list(map(float, record['DELTAS_STORAGE'].split(','))),
+                "DELTA_RAILWAY": list(map(float, record['DELTA_RAILWAY'].split(','))),
                 "FILENAMES_DICT": {
                     "январь": "январь.xlsx",
                     "февраль": "февраль.xlsx",
@@ -54,11 +57,11 @@ class TaskView(Pagination):
                     "ноябрь": "ноябрь.xlsx",
                     "декабрь": "декабрь.xlsx"
                 },
-                "YEARS": list(map(int, request['YEARS'].split(','))),
-                "FOB_PRICES": list(map(int, request['FOB_PRICES'].split(','))),
-                "RAILWAY_INITIAL_PRICE": int(request['RAILWAY_INITIAL_PRICE']),
-                "MAX_RATIO_RAILWAY": int(request['MAX_RATIO_RAILWAY']),
-                "STORAGES_BUY_ON_MARKET": bool(request['STORAGES_BUY_ON_MARKET']),
+                "YEARS": list(map(int, record['YEARS'].split(','))),
+                "FOB_PRICES": list(map(int, record['FOB_PRICES'].split(','))),
+                "RAILWAY_INITIAL_PRICE": int(record['RAILWAY_INITIAL_PRICE']),
+                "MAX_RATIO_RAILWAY": int(record['MAX_RATIO_RAILWAY']),
+                "STORAGES_BUY_ON_MARKET": bool(record['STORAGES_BUY_ON_MARKET']),
                 "CONSUMPTION_PATTERN": [
                     [
                         25.24773087,
@@ -136,14 +139,14 @@ class TaskView(Pagination):
                     "wh_file": "data/no_perevalka_updated_constr/storage/Склады_",
                     "wh_add_name": "_[P]{}_[CF]{}_[DS]{}_[SBoM]{}"
                 },
-                "WH_PREMIUM_RAILWAY": int(request['WH_PREMIUM_RAILWAY']),
-                "OVERALL_PREMIA_ADDITION": int(request['OVERALL_PREMIA_ADDITION']),
-                "MIN_RADIUS": int(request['MIN_RADIUS']),
-                "MAX_RADIUS": int(request['MAX_RADIUS']),
-                "CUSTOMER_DISTANCE": float(request['CUSTOMER_DISTANCE']),
-                "AVAILABILITY_RADIUS": int(request['AVAILABILITY_RADIUS']),
-                "STORAGE_PRICE": int(request['STORAGE_PRICE']),
-                "BALANCE_RATIO": float(request['BALANCE_RATIO']),
+                "WH_PREMIUM_RAILWAY": int(record['WH_PREMIUM_RAILWAY']),
+                "OVERALL_PREMIA_ADDITION": int(record['OVERALL_PREMIA_ADDITION']),
+                "MIN_RADIUS": int(record['MIN_RADIUS']),
+                "MAX_RADIUS": int(record['MAX_RADIUS']),
+                "CUSTOMER_DISTANCE": float(record['CUSTOMER_DISTANCE']),
+                "AVAILABILITY_RADIUS": int(record['AVAILABILITY_RADIUS']),
+                "STORAGE_PRICE": int(record['STORAGE_PRICE']),
+                "BALANCE_RATIO": float(record['BALANCE_RATIO']),
                 "DISTANCE_PRICE": [
                     {"value": 390, "low": 0, "high": 33.33},
                     {"value": 507, "low": 33.33, "high": 66.67},
@@ -155,11 +158,11 @@ class TaskView(Pagination):
                     {"value": 1377, "low": 233.33, "high": 266.67},
                     {"value": 1e20, "low": 266.67, "high": 1e20}
                 ],
-                "REARRANGE_HOLDINGS": bool(request['REARRANGE_HOLDINGS']),
-                "SHUFFLE_STORAGE": bool(request['SHUFFLE_STORAGE']),
-                "SHUFFLE_RAILWAY": bool(request['SHUFFLE_RAILWAY']),
-                "CORRECTION_FLAG": bool(request['CORRECTION_FLAG']),
-                "CORRECTION_CORIDOR": list(map(float, request['CORRECTION_CORIDOR'].split(',')))
+                "REARRANGE_HOLDINGS": bool(record['REARRANGE_HOLDINGS']),
+                "SHUFFLE_STORAGE": bool(record['SHUFFLE_STORAGE']),
+                "SHUFFLE_RAILWAY": bool(record['SHUFFLE_RAILWAY']),
+                "CORRECTION_FLAG": bool(record['CORRECTION_FLAG']),
+                "CORRECTION_CORIDOR": list(map(float, record['CORRECTION_CORIDOR'].split(',')))
             }
         }
         try:
