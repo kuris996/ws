@@ -8,6 +8,6 @@ class Kit(Model):
         super().__init__(db, lock)
         self.__db = db
         self.table_name = "kit"
-        self.columns = ['id', 'name', 'uuid', 'createdAt', 'startedAt', 'finishedAt', 'status']
+        self.columns = ['id', 'uuid', 'name', 'createdAt', 'startedAt', 'finishedAt', 'status']
         self.filters = ['status']
     

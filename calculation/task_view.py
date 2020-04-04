@@ -23,7 +23,8 @@ class TaskView(Pagination):
         task = Task(self.request.app.db, self.request.app.db_lock)
         method = record['method']
         if method == 'add':
-            _record = (record['PRODUCT'],
+            _record = (record['uuid'],
+                       record['PRODUCT'],
                        datetime.datetime.now(),
                        None,
                        None,

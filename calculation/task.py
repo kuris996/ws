@@ -8,7 +8,7 @@ class Task(Model):
         super().__init__(db, lock)
         self.__db = db
         self.table_name = "task"
-        self.columns = ['id', 'product', 'createdAt', 'startedAt', 'finishedAt', 'status']
+        self.columns = ['id', 'uuid', 'product', 'createdAt', 'startedAt', 'finishedAt', 'status']
         self.filters = ['status']
 
     def update_status(self, record):

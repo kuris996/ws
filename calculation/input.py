@@ -18,8 +18,11 @@ class Input:
         for content in s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
             key = content['Key']
             if key.startswith(prefix):
+                name = key[len(prefix):]
+                if not name:
+                    continue
                 files.append({
-                    "key" : key[len(prefix):],
+                    "key" : name,
                     "size" : content['Size'],
                     "lastModified" : content['LastModified'].isoformat(),
                     "url": os.path.join(STORAGE_URL, BUCKET_NAME, key)

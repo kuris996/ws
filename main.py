@@ -61,16 +61,16 @@ def initialize():
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS task("
             "id INTEGER PRIMARY KEY, "
-            "product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
+            "uuid TEXT, product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
         app.db.commit()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS kit("
             "id INTEGER PRIMARY KEY, "
-            "name TEXT, uuid TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
+            "uuid TEXT, name TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
         )
         app.db.commit()
         app.db_lock = threading.Lock()
-        app.task_update = Ticker(app, 5.0, task_check_results)
+        app.task_update = Ticker(app, 30.0, task_check_results)
         #app.task_update.start()
         return app
     except Exception as e:
