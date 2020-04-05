@@ -5,9 +5,9 @@ import boto3
 import datetime
 
 STORAGE_URL = 'https://storage.yandexcloud.net'
-BUCKET_NAME = 'ui-test'
-ACCESS_KEY_ID = 'jE46D2owP1uHS9dHRdyM'
-SECRET_ACCESS_KEY = 'qx-tm8jD82sCMwQHP3YG1siKMUtVJ3nDVb7o-kx-'
+BUCKET_NAME = 'eurochem-data'
+ACCESS_KEY_ID = 'M1vEGdT1OkGSSFkPI3ze'
+SECRET_ACCESS_KEY = 'L0m2BdFI-Snje71YXCvwTvZo9rrvidG5as0AIm6n'
 
 class Input:
     def fetch(self, prefix = ""):
