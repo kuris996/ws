@@ -13,7 +13,7 @@ class Kit(Model):
     
     def update_status(self, record):
         try:
-            self.lock.acquire()
+            self.lock_acquire()
             cursor = self.__db.cursor()
             cursor.execute(
                 "UPDATE kit SET"
@@ -31,4 +31,4 @@ class Kit(Model):
         except:
             return None
         finally:
-            self.lock.release()
+            self.lock_release()
