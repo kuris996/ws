@@ -19,7 +19,7 @@ from calculation.input import Input
 from ticker import Ticker
 
 ENGINE_ENDPOINT = "http://127.0.0.1:5000"
-DB_PATH = './assets/db.db'
+DB_PATH = 'db.db'
 
 def check_results(app):
     try:

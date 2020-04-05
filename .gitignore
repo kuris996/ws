@@ -5,3 +5,4 @@ database/__pycache__/*
 .vscode/settings.json
 calculation/__pycache__/*
 assets/*
+db.db
