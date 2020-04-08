@@ -16,7 +16,7 @@ class Task(Model):
             self.lock_acquire()
             cursor = self.__db.cursor()
             cursor.execute(
-                "UPDATE tasks SET"
+                "UPDATE task SET"
                 "   startedAt = ?,"
                 "   finishedAt = ?,"
                 "   status = ?"
