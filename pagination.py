@@ -23,7 +23,7 @@ class Pagination(web.View):
                 },
                 'filters' : filters
             }, dumps=functools.partial(json.dumps, indent=4, ensure_ascii=False, encoding='utf8'))
-        except Exception as e:
+        except:
             return web.Response(status=400)
 
     async def post(self):

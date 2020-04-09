@@ -29,7 +29,7 @@ class KitView(Pagination):
                        None,
                        None,
                       'idle')
-            id = await kit.add(_record)
+            await kit.add(_record)
             await self.run(record)
         return await self.get()
 
@@ -37,9 +37,8 @@ class KitView(Pagination):
         body = { "ID": str(record['uuid']) }
         try:
             headers = {'Content-type': 'application/json'}
-            req = requests.post(self.request.app.engine_endpoint + "/update_inputs", 
+            requests.post(self.request.app.engine_endpoint + "/update_inputs", 
                 json = body,
                 headers=headers)
-            rep = req.text
         except Exception as e:
             print('[ws]: could not request', str(e))

@@ -1,5 +1,5 @@
 from aiohttp import web
-from calculation.input import Input
+from calculation.bucket import Bucket
 
 import simplejson as json
 import functools
@@ -7,13 +7,12 @@ import functools
 class InputView(web.View):
     async def get(self):
         try:
-            prefix = str(self.request.query.get('prefix', ""))
-            if prefix and not prefix.endswith('/'):
-                prefix += '/'
-            input = Input()
-            data_source = input.fetch(prefix)
+            kit = str(self.request.query.get('kit', ""))
+            uuid = str(self.request.query.get('uuid', ""))
+            bucket = Bucket()
+            data_source = bucket.fetch(kit, uuid)
             return web.json_response(
                 data_source
             , dumps=functools.partial(json.dumps, indent=4, ensure_ascii=False, encoding='utf8'))
-        except Exception as e:
+        except:
             return web.Response(status=400)
