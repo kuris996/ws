@@ -17,14 +17,14 @@ from routes import routes
 
 from calculation.task import Task
 from calculation.kit import Kit
-from calculation.bucket import Bucket
+from bucket import Bucket
 from ticker import Ticker
 
-ENGINE_ENDPOINT = "http://127.0.0.1:5000"
-DB_PATH = 'db.db'
+from constants import *
 
 def check_results(app):
     try:
+        bucket = app.bucket
         req = requests.post(app.engine_endpoint + "/check_results")
         result = json.loads(req.text)
         db = sqlite3.connect(DB_PATH)
@@ -55,7 +55,8 @@ def check_results(app):
                 }
                 kit = Kit(db, app.db_lock)
                 kit.update_status(record)
-            
+
+        bucket.write(DB_PATH, DB_PATH)
     except Exception as e:
         print('[tick]: ', e)
 
@@ -72,6 +73,9 @@ def initialize():
         else:
             app.engine_endpoint = args.ee
         print("ENDPOINT: ", app.engine_endpoint)
+        bucket = Bucket()
+        bucket.read(DB_PATH, DB_PATH)
+        app.bucket = bucket
         app.db = sqlite3.connect(DB_PATH)
         cursor = app.db.cursor()
         cursor.execute(
@@ -86,13 +90,12 @@ def initialize():
         )
         app.db.commit()
         app.db_lock = threading.Lock()
-        app.task_update = Ticker(app, 30.0, check_results)
+        app.task_update = Ticker(app, 1.0, check_results)
         app.task_update.start()
         return app
     except Exception as e:
         print('[ws]: could not initialize', str(e))
       
-
 
 if __name__ == "__main__":
     app = initialize()

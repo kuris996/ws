@@ -1,5 +1,5 @@
 from aiohttp import web
-from calculation.bucket import Bucket
+from bucket import Bucket
 
 import simplejson as json
 import functools
@@ -9,7 +9,7 @@ class InputView(web.View):
         try:
             kit = str(self.request.query.get('kit', ""))
             uuid = str(self.request.query.get('uuid', ""))
-            bucket = Bucket()
+            bucket = self.request.app.bucket
             data_source = bucket.fetch(kit, uuid)
             return web.json_response(
                 data_source

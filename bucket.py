@@ -18,18 +18,34 @@ URL = 'url'
 CHILDREN = 'children'
 
 class Bucket:
-    def fetch(self, kit, uuid):
-        session = boto3.session.Session()
-        s3 = session.client(
+    def __init__(self):
+        self.session = boto3.session.Session()
+        self.s3 = self.session.client(
             service_name='s3',
             endpoint_url=STORAGE_URL,
             aws_access_key_id=ACCESS_KEY_ID,
             aws_secret_access_key=SECRET_ACCESS_KEY,
             region_name='ru-central1'
         )
+
+    def write(self, source_file_name, dest_file_name):
+        try:
+            self.s3.upload_file(source_file_name, BUCKET_NAME, dest_file_name)
+            return True
+        except:
+            return False
+
+    def read(self, source_file_name, dest_file_name):
+        try:
+            self.s3.download_file(BUCKET_NAME, source_file_name, dest_file_name)
+            return True
+        except:
+            return False
+
+    def fetch(self, kit, uuid):
         tree = []
         try:
-            for content in s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
+            for content in self.s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
                 key = content['Key']
                 path = None                
                 prefix = 'data/Inputs/' + kit

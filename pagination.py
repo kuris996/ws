@@ -3,6 +3,8 @@ import simplejson as json
 
 import functools
 
+from constants import DB_PATH
+
 class Pagination(web.View):
     async def get(self):
         page_size = int(self.request.query.get('pageSize', 10))
@@ -28,6 +30,7 @@ class Pagination(web.View):
 
     async def post(self):
         try:
+            bucket = self.request.app.bucket
             body = await self.request.json()
             method = body['method']
             if (method == 'remove'):
@@ -36,6 +39,7 @@ class Pagination(web.View):
                 await self.add(body)
             elif (method == 'update'):
                 await self.update(body)
+            bucket.write(DB_PATH, DB_PATH)
             return await self.get()
         except:
             return web.Response(status=400)
