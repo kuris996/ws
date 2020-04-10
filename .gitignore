@@ -6,3 +6,4 @@ database/__pycache__/*
 calculation/__pycache__/*
 assets/*
 db.db
+auth/__pycache__/login_view.cpython-37.pyc
