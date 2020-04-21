@@ -81,12 +81,21 @@ def initialize():
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS task("
             "id INTEGER PRIMARY KEY, "
-            "uuid TEXT, kit TEXT, product TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)")
-        app.db.commit()
+            "uuid TEXT, kit TEXT, product TEXT, kitName TEXT, createdAt TIMESTAMP, startedAt TIMESTAMP, finishedAt TIMESTAMP, status TEXT)")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS kit("
             "id INTEGER PRIMARY KEY, "
-            "uuid TEXT, name TEXT, createdAt timestamp, startedAt timestamp, finishedAt timestamp, status TEXT)"
+            "uuid TEXT, name TEXT, createdAt TIMESTAMP, startedAt TIMESTAMP, finishedAt TIMESTAMP, status TEXT)"
+        )
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS backtesting("
+            "id INTEGER PRIMARY KEY, "
+            "createdAt TIMESTAMP, startedAt TIMESTAMP, finishedAt TIMESTAMP, status TEXT)"
+        )
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS backtesting_task("
+            "id INTEGER PRIMARY KEY,"
+            "backtestingId INTEGER, taskId INTEGER)"
         )
         app.db.commit()
         app.db_lock = threading.Lock()

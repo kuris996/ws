@@ -43,6 +43,9 @@ class Model:
         finally:
             self.lock_release()
 
+    async def fetch_more(self, cursor, items):
+        return items
+
     async def fetch(self, offset, limit, sorter, filters):
         try:
             self.lock_acquire()
@@ -66,13 +69,17 @@ class Model:
                     sql += "DESC "
             sql += " LIMIT {}, {}".format(offset, limit)
             cursor.execute(sql)
-            return cursor.fetchall()
+            items = cursor.fetchall()
+            return await self.fetch_more(cursor, items)
         except:
             return None
         finally:
             self.lock_release()
 
-    async def add(self, record):
+    async def add_more(self, cursor, lastrowid, items):
+        pass
+
+    async def add(self, record, items = None):
         try:
             self.lock_acquire()
             cursor = self.__db.cursor()
@@ -81,9 +88,12 @@ class Model:
                 ", ".join(self.columns[1:]), 
                 ", ".join("?" for i in range(len(self.columns[1:]))))
             cursor.execute(sql, record)
+            lastrowid = cursor.lastrowid
+            await self.add_more(cursor, lastrowid, items)
             self.__db.commit()
-            return cursor.lastrowid
+            return lastrowid
         except Exception as e:
+            print(e)
             return None
         finally:
             self.lock_release()
@@ -104,6 +114,9 @@ class Model:
         finally:
             self.lock_release()
 
+    async def remove_more(self, cursor, id):
+        pass
+
     async def remove(self, id):
         try:
             self.lock_acquire()
@@ -111,6 +124,7 @@ class Model:
             cursor.execute("DELETE FROM {} WHERE id IN ({})".format(
                 self.table_name, ','.join(str(x) for x in id))
             )
+            await self.remove_more(cursor, id)
             self.__db.commit()
             return True
         except:

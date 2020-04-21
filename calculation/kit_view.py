@@ -21,17 +21,9 @@ class KitView(Pagination):
 
     async def add(self, record):
         kit = Kit(self.request.app.db, self.request.app.db_lock)
-        method = record['method']
-        if method == 'add':
-            _record = (record['uuid'],
-                       record['name'],
-                       datetime.datetime.now(),
-                       None,
-                       None,
-                      'idle')
-            await kit.add(_record)
-            await self.run(record)
-        return await self.get()
+        _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'idle')
+        await kit.add(_record)
+        await self.run(record)
 
     async def run(self, record):
         body = { "ID": str(record['uuid']) }

@@ -21,18 +21,9 @@ class TaskView(Pagination):
 
     async def add(self, record):
         task = Task(self.request.app.db, self.request.app.db_lock)
-        method = record['method']
-        if method == 'add':
-            _record = (record['uuid'],
-                       record['kit'],
-                       record['PRODUCT'],
-                       datetime.datetime.now(),
-                       None,
-                       None,
-                      'idle')
-            id = await task.add(_record)
-            await self.run(id, record)
-        return await self.get()
+        _record = (record['uuid'], record['kit'], record['PRODUCT'], record['kitName'], datetime.datetime.now(), None, None, 'idle')
+        id = await task.add(_record)
+        await self.run(id, record)
 
     async def run(self, id, record):
         body = {
@@ -167,9 +158,8 @@ class TaskView(Pagination):
         }
         try:
             headers = {'Content-type': 'application/json'}
-            req = requests.post(self.request.app.engine_endpoint + "/run", 
-                json = body,
+            requests.post(self.request.app.engine_endpoint + "/run", 
+                json=body,
                 headers=headers)
-            rep = req.text
         except Exception as e:
             print('[ws]: could not request', str(e))

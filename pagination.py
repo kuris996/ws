@@ -33,6 +33,7 @@ class Pagination(web.View):
             bucket = self.request.app.bucket
             body = await self.request.json()
             method = body['method']
+            del body['method']
             if (method == 'remove'):
                 await self.remove(body['id'])
             elif (method == 'add'):
