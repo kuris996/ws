@@ -41,7 +41,7 @@ class TaskView(Pagination):
                     "CONFIG_ID": str(record['uuid']),
                     "PRODUCT": str(record['PRODUCT']),
                     "CALCULATION_TYPE_ID" : record['CALCULATION_TYPE_ID'] - 1,
-                    "DELTA": record['DELTA'],
+                    "DELTA": list(map(float, record['DELTA'].split(','))),
                     "START_PRICE": record['START_PRICE']
                 }
             }
