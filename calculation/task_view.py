@@ -20,10 +20,15 @@ class TaskView(Pagination):
         await task.remove(id)
 
     async def add(self, record):
-        task = Task(self.request.app.db, self.request.app.db_lock)
-        _record = (record['uuid'], record['kit'], record['PRODUCT'], record['kitName'], datetime.datetime.now(), None, None, 'idle')
-        id = await task.add(_record)
-        await self.run(id, record)
+        id = None
+        try:
+            task = Task(self.request.app.db, self.request.app.db_lock)
+            _record = (record['uuid'], record['kit'], record['PRODUCT'], record['kitName'], datetime.datetime.now(), None, None, 'idle')
+            id = await task.add(_record)
+            await self.run(id, record)
+        except:
+            _record = (record['uuid'], record['kit'], record['PRODUCT'], record['kitName'], datetime.datetime.now(), None, None, 'idle', id)
+            await task.update(_record)
 
     async def run(self, id, record):
         body = {
@@ -156,10 +161,7 @@ class TaskView(Pagination):
                 "CORRECTION_CORIDOR": list(map(float, record['CORRECTION_CORIDOR'].split(',')))
             }
         }
-        try:
-            headers = {'Content-type': 'application/json'}
-            requests.post(self.request.app.engine_endpoint + "/run", 
-                json=body,
-                headers=headers)
-        except Exception as e:
-            print('[ws]: could not request', str(e))
+        headers = {'Content-type': 'application/json'}
+        requests.post(self.request.app.engine_endpoint + "/run", 
+            json=body,
+            headers=headers)

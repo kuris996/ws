@@ -98,7 +98,7 @@ class Model:
         finally:
             self.lock_release()
 
-    async def update(self, record, id):
+    async def update(self, record):
         try:
             self.lock_acquire()
             cursor = self.__db.cursor()
@@ -106,7 +106,7 @@ class Model:
                 self.table_name,
                 " = ?, ".join(self.columns[1:])
             )
-            cursor.execute(sql, record, id)
+            cursor.execute(sql, record)
             self.__db.commit()
             return True
         except:

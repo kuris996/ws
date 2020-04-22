@@ -17,6 +17,7 @@ from routes import routes
 
 from calculation.task import Task
 from calculation.kit import Kit
+from calculation.backtesting import Backtesting
 from bucket import Bucket
 from ticker import Ticker
 
@@ -32,29 +33,28 @@ def check_results(app):
             value = result[key]
             startedAt = None
             finishedAt = None
+            _type = None
             if value['startedAt'] != None:
                 startedAt = dateutil.parser.isoparse(value['startedAt'])
             if value['finishedAt'] != None:
                 finishedAt  = dateutil.parser.isoparse(value['finishedAt'])
-            try:
-                int(key)    # if Number than it`s a Task otherwise it`s a Kit
-                record = {
-                    "id" : key,
-                    "startedAt" : startedAt,
-                    "finishedAt" : finishedAt,
-                    "status" : value['status']
-                }
+            if value['type'] != None:
+                _type = value['type']
+            record = {
+                "id" : key,
+                "startedAt" : startedAt,
+                "finishedAt" : finishedAt,
+                "status" : value['status']
+            }
+            if _type == 'model_calculation':
                 task = Task(db, app.db_lock)
                 task.update_status(record)
-            except:
-                record = {
-                    "id" : key,
-                    "startedAt" : startedAt,
-                    "finishedAt" : finishedAt,
-                    "status" : value['status']
-                }
+            elif _type == 'generate_inputs':
                 kit = Kit(db, app.db_lock)
                 kit.update_status(record)
+            elif _type == 'backtesting':
+                backtesting = Backtesting(db, app.db_lock)
+                backtesting.update_status(record)
 
         bucket.write(DB_PATH, DB_PATH)
     except Exception as e:
@@ -99,7 +99,7 @@ def initialize():
         )
         app.db.commit()
         app.db_lock = threading.Lock()
-        app.task_update = Ticker(app, 1.0, check_results)
+        app.task_update = Ticker(app, 30.0, check_results)
         app.task_update.start()
         return app
     except Exception as e:

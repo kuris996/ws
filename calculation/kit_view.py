@@ -20,17 +20,19 @@ class KitView(Pagination):
         await kit.remove(id)
 
     async def add(self, record):
-        kit = Kit(self.request.app.db, self.request.app.db_lock)
-        _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'idle')
-        await kit.add(_record)
-        await self.run(record)
+        id = None
+        try:
+            kit = Kit(self.request.app.db, self.request.app.db_lock)
+            _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'idle')
+            id = await kit.add(_record)
+            await self.run(record)
+        except:
+            _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'error', id)
+            await kit.update(_record)
 
     async def run(self, record):
         body = { "ID": str(record['uuid']) }
-        try:
-            headers = {'Content-type': 'application/json'}
-            requests.post(self.request.app.engine_endpoint + "/update_inputs", 
-                json = body,
-                headers=headers)
-        except Exception as e:
-            print('[ws]: could not request', str(e))
+        headers = {'Content-type': 'application/json'}
+        requests.post(self.request.app.engine_endpoint + "/update_inputs", 
+            json = body,
+            headers=headers)

@@ -27,9 +27,14 @@ class BacktestingView(Pagination):
             kit = value['kit']
             backtesting_kits[kit][key] = value
         for key, value in backtesting_kits.items():
-            _record = (datetime.datetime.now(), None, None, 'idle')
-            id = await backtesting.add(_record, value)
-            await self.run(id, key, value)
+            id = None
+            try:
+                _record = (datetime.datetime.now(), None, None, 'idle')
+                id = await backtesting.add(_record, value)
+                await self.run(id, key, value)
+            except:
+                _record = (datetime.datetime.now(), None, None, 'error', id)
+                await backtesting.update(_record)
 
     async def run(self, id, kit, record):
         config_id = []
@@ -43,12 +48,9 @@ class BacktestingView(Pagination):
                 "fact_file" : "act_v5.xlsx"
             }
         }
-        try:
-            headers = {'Content-type': 'application/json'}
-            requests.post(self.request.app.engine_endpoint + "/backtesting", 
-                json=body,
-                headers=headers)
-        except Exception as e:
-            print('[ws]: could not request', str(e))
+        headers = {'Content-type': 'application/json'}
+        requests.post(self.request.app.engine_endpoint + "/backtesting", 
+            json=body,
+            headers=headers)
 
 
