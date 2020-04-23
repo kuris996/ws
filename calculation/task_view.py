@@ -42,7 +42,7 @@ class TaskView(Pagination):
                     "PRODUCT": str(record['PRODUCT']),
                     "CALCULATION_TYPE_ID" : _type - 1,
                     "DELTA": list(map(float, record['DELTA'].split(','))),
-                    "START_PRICE": record['START_PRICE']
+                    "START_PRICE": float(record['START_PRICE'])
                 }
             }
         elif _type == 2:
