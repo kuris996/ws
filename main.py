@@ -29,6 +29,7 @@ def check_results(app):
         req = requests.post(app.engine_endpoint + "/check_results")
         result = json.loads(req.text)
         db = sqlite3.connect(DB_PATH)
+        save_db = False
         for key in result:
             value = result[key]
             startedAt = None
@@ -49,14 +50,18 @@ def check_results(app):
             if _type == 'model_calculation':
                 task = Task(db, app.db_lock)
                 task.update_status(record)
+                save_db = True
             elif _type == 'generate_inputs':
                 kit = Kit(db, app.db_lock)
                 kit.update_status(record)
+                save_db = True
             elif _type == 'backtesting':
                 backtesting = Backtesting(db, app.db_lock)
                 backtesting.update_status(record)
+                save_db = True
 
-        bucket.write(DB_PATH, DB_PATH)
+        if save_db:
+            bucket.write(DB_PATH, DB_PATH)
     except Exception as e:
         print('[tick]: ', e)
 
@@ -99,7 +104,7 @@ def initialize():
         )
         app.db.commit()
         app.db_lock = threading.Lock()
-        app.task_update = Ticker(app, 30.0, check_results)
+        app.task_update = Ticker(app, 5.0, check_results)
         app.task_update.start()
         return app
     except Exception as e:

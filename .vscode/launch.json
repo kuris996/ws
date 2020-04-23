@@ -8,7 +8,7 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "args":["--ee", "http://127.0.0.1:5000"]
+            "args":["--ee", "http://84.201.149.237:5000"]
         }
     ],
     "compounds": []

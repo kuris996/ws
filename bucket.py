@@ -42,26 +42,26 @@ class Bucket:
         tree = []
         try:
             for content in self.s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
-                key = content['Key']
                 path = None                
                 prefix = 'data/Inputs/' + kit
-                if not uuid and key.startswith(prefix + '/Model_outputs'):
-                    continue
-                if uuid and key.startswith(prefix + '/Model_outputs/' + uuid):
-                    path = key[len('data/Inputs/'):]
+                key = content['Key']
+                if uuid:
+                    for n in range(4):
+                        if key.startswith(prefix + '/{}/'.format(n) + uuid):
+                            path = key[len('data/Inputs/'):]
+                            path = path.replace('/{}/'.format(n) + uuid, '')
+                            break
+                    
                 if key.startswith(prefix + '/Input_inputs'):
                     path = key[len('data/Inputs/'):]
-                if key.startswith(prefix + '/Input_outputs'):
+                elif key.startswith(prefix + '/Input_outputs'):
                     path = key[len('data/Inputs/'):]
                 if path:
                     path = path.replace(kit, 'root')
-                    if uuid:
-                        path = path.replace(uuid + '/', '')
                     self.__append_contents(path, content, tree)
         except:
             pass
         return tree
-
 
     def __append_contents(self, path, contents, tree):
         if not path:

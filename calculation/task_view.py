@@ -40,7 +40,7 @@ class TaskView(Pagination):
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),
                     "PRODUCT": str(record['PRODUCT']),
-                    "CALCULATION_TYPE_ID" : record['CALCULATION_TYPE_ID'] - 1,
+                    "CALCULATION_TYPE_ID" : _type - 1,
                     "DELTA": list(map(float, record['DELTA'].split(','))),
                     "START_PRICE": record['START_PRICE']
                 }
@@ -52,7 +52,7 @@ class TaskView(Pagination):
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),
                     "PRODUCT": str(record['PRODUCT']),
-                    "CALCULATION_TYPE_ID" : record['CALCULATION_TYPE_ID'] - 1,
+                    "CALCULATION_TYPE_ID" : _type - 1,
                     "DELTA": record['DELTA'],
                     "START_PRICE": record['START_PRICE'],
                     "DELTAS_STORAGE": list(map(float, record['DELTAS_STORAGE'].split(','))),
