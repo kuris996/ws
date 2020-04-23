@@ -23,10 +23,13 @@ class KitView(Pagination):
         id = None
         try:
             kit = Kit(self.request.app.db, self.request.app.db_lock)
-            _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'idle')
-            id = await kit.add(_record)
             if record['type'] == 1:
+                _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'idle')
+                id = await kit.add(_record)
                 await self.run(record)
+            elif record['type'] == 2:
+                _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'finished')
+                id = await kit.add(_record)
         except:
             _record = (record['uuid'], record['name'], datetime.datetime.now(), None, None, 'error', id)
             await kit.update(_record)
