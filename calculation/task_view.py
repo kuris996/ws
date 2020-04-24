@@ -53,8 +53,6 @@ class TaskView(Pagination):
                     "CONFIG_ID": str(record['uuid']),
                     "PRODUCT": str(record['PRODUCT']),
                     "CALCULATION_TYPE_ID" : _type - 1,
-                    "DELTA": record['DELTA'],
-                    "START_PRICE": record['START_PRICE'],
                     "DELTAS_STORAGE": list(map(float, record['DELTAS_STORAGE'].split(','))),
                     "DELTA_RAILWAY": list(map(float, record['DELTA_RAILWAY'].split(','))),
                     "FILENAMES_DICT": {
