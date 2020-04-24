@@ -35,7 +35,7 @@ class TaskView(Pagination):
         body = {}
         if _type == 1:
             body = {
-                "ID": id,
+                "ID": str(id),
                 "Config": {
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),
@@ -47,7 +47,7 @@ class TaskView(Pagination):
             }
         elif _type == 2:
             body = {
-                "ID": id,
+                "ID": str(id),
                 "Config": {
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),

@@ -41,7 +41,7 @@ class BacktestingView(Pagination):
         for key, value in record.items():
             config_id.append(value['uuid'])
         body = {
-            "ID": id,
+            "ID": str(id),
             "Config" : {
                 "data_id" : str(kit),
                 "config_id" : config_id,
