@@ -12,10 +12,10 @@ class Backtesting(Model):
         self.filters = ['status']
 
     async def fetch_more(self, cursor, items):
-        cursor.row_factory = lambda cursor, row: dict(zip(['product', 'kitName', 'createdAt', 'finishedAt'], row))
+        cursor.row_factory = lambda cursor, row: dict(zip(['product', 'kitName', 'kit', 'createdAt'], row))
         for item in items:
             cursor.execute(
-                "SELECT product, kitName, task.createdAt as createdAt "
+                "SELECT product, kitName, task.kit as kit, task.createdAt as createdAt "
                 "FROM task, backtesting_task "
                 "WHERE {} == backtesting_task.backtestingId"
                 "  AND task.id == backtesting_task.taskId".format(item['id']))

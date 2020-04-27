@@ -56,6 +56,8 @@ class Bucket:
                     path = key[len('data/Inputs/'):]
                 elif key.startswith(prefix + '/Input_outputs'):
                     path = key[len('data/Inputs/'):]
+                elif key.startswith(prefix + '/Backtesting'):
+                    path = key[len('data/Inputs/'):]
                 if path:
                     path = path.replace(kit, 'root')
                     self.__append_contents(path, content, tree)
