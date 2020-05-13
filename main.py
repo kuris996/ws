@@ -20,6 +20,7 @@ from calculation.kit import Kit
 from calculation.backtesting import Backtesting
 from bucket import Bucket
 from ticker import Ticker
+from chart import Chart
 
 from constants import *
 

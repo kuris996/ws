@@ -146,11 +146,6 @@ class TaskView(Pagination):
                             420731.3067
                         ]
                     ],
-                    "PATH": {
-                        "wh_prefix": "data/no_perevalka_updated_constr/railway/",
-                        "wh_file": "data/no_perevalka_updated_constr/storage/Склады_",
-                        "wh_add_name": "_[P]{}_[CF]{}_[DS]{}_[SBoM]{}"
-                    },
                     "WH_PREMIUM_RAILWAY": int(record['WH_PREMIUM_RAILWAY']),
                     "OVERALL_PREMIA_ADDITION": int(record['OVERALL_PREMIA_ADDITION']),
                     "MIN_RADIUS": int(record['MIN_RADIUS']),

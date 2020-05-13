@@ -65,6 +65,22 @@ class Bucket:
             pass
         return tree
 
+    def fetch_inputs(self, kit):
+        tree = []
+        try:
+            for content in self.s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
+                path = None                
+                prefix = 'data/Inputs/' + kit + '/Input_outputs/Inputs/'
+                key = content['Key']
+                if key.startswith(prefix):
+                    path = key[len(prefix):]                
+                if path:
+                    path = path.replace(kit, 'root')
+                    self.__append_contents(path, content, tree)
+        except:
+            pass
+        return tree
+
     def __append_contents(self, path, contents, tree):
         if not path:
             return
