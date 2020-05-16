@@ -40,7 +40,7 @@ class TaskView(Pagination):
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),
                     "CALCULATION_TYPE_ID" : _type - 1,
-                    "DELTA": list(map(float, record['DELTA'].split(','))),
+                    "DELTA": [float(record['DELTA'])],
                     "START_PRICE": float(record['START_PRICE']),
                     "REARRANGE_HOLDINGS": bool(record['REARRANGE_HOLDINGS'])
                 }
@@ -53,8 +53,8 @@ class TaskView(Pagination):
                     "CONFIG_ID": str(record['uuid']),
                     "PRODUCT": str(record['PRODUCT']),
                     "CALCULATION_TYPE_ID" : _type - 1,
-                    "DELTAS_STORAGE": list(map(float, record['DELTAS_STORAGE'].split(','))),
-                    "DELTA_RAILWAY": list(map(float, record['DELTA_RAILWAY'].split(','))),
+                    "DELTAS_STORAGE": [float(record['DELTAS_STORAGE'])],
+                    "DELTA_RAILWAY": [float(record['DELTA_RAILWAY'])],
                     "FILENAMES_DICT": {
                         "январь": "январь.xlsx",
                         "февраль": "февраль.xlsx",
@@ -70,7 +70,6 @@ class TaskView(Pagination):
                         "декабрь": "декабрь.xlsx"
                     },
                     "YEARS": list(map(int, record['YEARS'].split(','))),
-                    "FOB_PRICES": list(map(int, record['FOB_PRICES'].split(','))),
                     "RAILWAY_INITIAL_PRICE": int(record['RAILWAY_INITIAL_PRICE']),
                     "MAX_RATIO_RAILWAY": int(record['MAX_RATIO_RAILWAY']),
                     "STORAGES_BUY_ON_MARKET": bool(record['STORAGES_BUY_ON_MARKET']),                    
