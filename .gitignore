@@ -7,3 +7,4 @@ calculation/__pycache__/*
 assets/*
 db.db
 auth/__pycache__/login_view.cpython-37.pyc
+auth/__pycache__/login_view.cpython-38.pyc

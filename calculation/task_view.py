@@ -39,10 +39,10 @@ class TaskView(Pagination):
                 "Config": {
                     "DATA_ID": str(record['kit']),
                     "CONFIG_ID": str(record['uuid']),
-                    "PRODUCT": str(record['PRODUCT']),
                     "CALCULATION_TYPE_ID" : _type - 1,
                     "DELTA": list(map(float, record['DELTA'].split(','))),
-                    "START_PRICE": float(record['START_PRICE'])
+                    "START_PRICE": float(record['START_PRICE']),
+                    "REARRANGE_HOLDINGS": bool(record['REARRANGE_HOLDINGS'])
                 }
             }
         elif _type == 2:
@@ -73,7 +73,8 @@ class TaskView(Pagination):
                     "FOB_PRICES": list(map(int, record['FOB_PRICES'].split(','))),
                     "RAILWAY_INITIAL_PRICE": int(record['RAILWAY_INITIAL_PRICE']),
                     "MAX_RATIO_RAILWAY": int(record['MAX_RATIO_RAILWAY']),
-                    "STORAGES_BUY_ON_MARKET": bool(record['STORAGES_BUY_ON_MARKET']),
+                    "STORAGES_BUY_ON_MARKET": bool(record['STORAGES_BUY_ON_MARKET']),                    
+                    "AUTO_OPEN_STORAGE": bool(record['AUTO_OPEN_STORAGE']),
                     "CONSUMPTION_PATTERN": [
                         [
                             25.24773087,
@@ -146,8 +147,8 @@ class TaskView(Pagination):
                             420731.3067
                         ]
                     ],
-                    "WH_PREMIUM_RAILWAY": int(record['WH_PREMIUM_RAILWAY']),
-                    "OVERALL_PREMIA_ADDITION": int(record['OVERALL_PREMIA_ADDITION']),
+                    "ALTERNATIVE_PREMIUM": int(record['ALTERNATIVE_PREMIUM']),
+                    "LOGISTIC_PREMIUM": int(record['LOGISTIC_PREMIUM']),
                     "MIN_RADIUS": int(record['MIN_RADIUS']),
                     "MAX_RADIUS": int(record['MAX_RADIUS']),
                     "CUSTOMER_DISTANCE": float(record['CUSTOMER_DISTANCE']),
