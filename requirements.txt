@@ -4,3 +4,5 @@ wheel
 requests
 python-dateutil
 boto3
+numpy
+pandas
