@@ -69,7 +69,7 @@ class TaskView(Pagination):
                         "ноябрь": "ноябрь.xlsx",
                         "декабрь": "декабрь.xlsx"
                     },
-                    "YEARS": list(map(int, record['YEARS'].split(','))),
+                    "YEARS": record['YEARS'],
                     "RAILWAY_INITIAL_PRICE": int(record['RAILWAY_INITIAL_PRICE']),
                     "MAX_RATIO_RAILWAY": int(record['MAX_RATIO_RAILWAY']),
                     "STORAGES_BUY_ON_MARKET": bool(record['STORAGES_BUY_ON_MARKET']),                    
