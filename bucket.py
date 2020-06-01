@@ -41,7 +41,7 @@ class Bucket:
     def fetch(self, kit, uuid):
         tree = []
         try:
-            for content in self.s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
+            for content in self.get_all_s3_objects(Bucket=BUCKET_NAME):
                 path = None                
                 prefix = 'data/Inputs/' + kit
                 key = content['Key']
@@ -68,7 +68,7 @@ class Bucket:
     def fetch_inputs(self, kit):
         tree = []
         try:
-            for content in self.s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
+            for content in self.get_all_s3_objects(Bucket=BUCKET_NAME):
                 path = None                
                 prefix = 'data/Inputs/' + kit + '/Input_outputs/Inputs/'
                 key = content['Key']
@@ -80,6 +80,18 @@ class Bucket:
         except:
             pass
         return tree
+
+    def get_all_s3_objects(self, **base_kwargs):
+        continuation_token = None
+        while True:
+            list_kwargs = dict(MaxKeys=1000, **base_kwargs)
+            if continuation_token:
+                list_kwargs['ContinuationToken'] = continuation_token
+            response = self.s3.list_objects_v2(**list_kwargs)
+            yield from response.get('Contents', [])
+            if not response.get('IsTruncated'):  # At the end of the list?
+                break
+            continuation_token = response.get('NextContinuationToken')
 
     def __append_contents(self, path, contents, tree):
         if not path:
